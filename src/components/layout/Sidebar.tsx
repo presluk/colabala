@@ -70,7 +70,7 @@ export default function Sidebar() {
       {/* App title */}
       <div className="px-6 py-5 border-b border-gray-100">
         <h1 className="text-xl font-bold text-gray-900">
-          🐨 KoalaColab
+          🐨 Colabala
         </h1>
       </div>
 

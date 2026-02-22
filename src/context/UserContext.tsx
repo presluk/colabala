@@ -9,7 +9,7 @@ interface UserState {
 
 const UserContext = createContext<UserState | null>(null);
 
-const STORAGE_KEY = 'koalacolab_user';
+const STORAGE_KEY = 'colabala_user';
 
 function loadStoredUser(): User | null {
   const stored = localStorage.getItem(STORAGE_KEY);

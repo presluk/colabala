@@ -146,7 +146,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         config,
         'changelog',
         updated,
-        `[KoalaColab] ${entry.performedBy}: ${entry.summary}`,
+        `[Colabala] ${entry.performedBy}: ${entry.summary}`,
         shas.current.changelog ?? undefined,
       );
       shas.current.changelog = newSha;
@@ -173,7 +173,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
           config,
           file,
           updated,
-          `[KoalaColab] Aktualizace ${file}`,
+          `[Colabala] Aktualizace ${file}`,
           shas.current[file] ?? undefined,
         );
         shas.current[file] = newSha;
@@ -200,7 +200,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
           config,
           file,
           current,
-          `[KoalaColab] Smazání z ${file}`,
+          `[Colabala] Smazání z ${file}`,
           shas.current[file] ?? undefined,
         );
         shas.current[file] = newSha;

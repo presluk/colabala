@@ -13,7 +13,7 @@ export default function LoginScreen() {
   const { login, isLoading, error } = useAuth();
   const owner = detectOwner();
   const [token, setToken] = useState('');
-  const [repo, setRepo] = useState(owner ? `${owner}/koalacolab-data` : '');
+  const [repo, setRepo] = useState(owner ? `${owner}/colabala-data` : '');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ export default function LoginScreen() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🐨 KoalaColab
+            🐨 Colabala
           </h1>
           <p className="text-gray-500 text-lg">Sdílené poznámky a úkoly</p>
         </div>
@@ -67,7 +67,7 @@ export default function LoginScreen() {
               onChange={(e) => setRepo(e.target.value)}
               required
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
-              placeholder="jan/koalacolab-data"
+              placeholder="jan/colabala-data"
             />
             <p className="mt-1 text-xs text-gray-400">
               Privátní repozitář pro ukládání dat

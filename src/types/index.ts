@@ -1,0 +1,76 @@
+export interface User {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface ShoppingList {
+  id: string;
+  title: string;
+  createdBy: string;
+  createdAt: string;
+  tags: string[];
+  items: Record<string, ShoppingItem>;
+}
+
+export interface ShoppingItem {
+  id: string;
+  text: string;
+  checked: boolean;
+  addedBy: string;
+  checkedBy?: string;
+  sortOrder: number;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: 'todo' | 'in_progress' | 'done';
+  priority: 'low' | 'medium' | 'high';
+  assignedTo?: string;
+  createdBy: string;
+  createdAt: string;
+  deadline?: string;
+  tags: string[];
+}
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  createdBy: string;
+  createdAt: string;
+  lastEditedBy: string;
+  lastEditedAt: string;
+  tags: string[];
+  pinned: boolean;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface ChangelogEntry {
+  id: string;
+  entityType: 'shoppingList' | 'task' | 'note' | 'tag';
+  entityId: string;
+  entityTitle: string;
+  action: 'create' | 'update' | 'delete' | 'check' | 'uncheck';
+  performedBy: string;
+  performedAt: string;
+  summary: string;
+}
+
+export interface AppData {
+  shoppingLists: Record<string, ShoppingList>;
+  tasks: Record<string, Task>;
+  notes: Record<string, Note>;
+  tags: Record<string, Tag>;
+  users: Record<string, User>;
+  changelog: ChangelogEntry[];
+}
+
+export type DataFile = 'shopping-lists' | 'tasks' | 'notes' | 'tags' | 'users' | 'changelog';

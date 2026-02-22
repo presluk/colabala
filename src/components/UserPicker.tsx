@@ -1,0 +1,157 @@
+import { useState } from 'react';
+import { useData, generateId } from '../context/DataContext';
+import { useUser } from '../context/UserContext';
+import type { User } from '../types';
+
+const PRESET_COLORS = [
+  '#3b82f6', // blue
+  '#ef4444', // red
+  '#22c55e', // green
+  '#f59e0b', // amber
+  '#8b5cf6', // violet
+  '#ec4899', // pink
+];
+
+export default function UserPicker() {
+  const { data, saveUser } = useData();
+  const { setCurrentUser } = useUser();
+  const [isAdding, setIsAdding] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newColor, setNewColor] = useState(PRESET_COLORS[0]);
+
+  const users = Object.values(data.users);
+
+  const handleSelectUser = (user: User) => {
+    setCurrentUser(user);
+  };
+
+  const handleSaveNewUser = async () => {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+
+    const user: User = {
+      id: generateId(),
+      name: trimmed,
+      color: newColor,
+    };
+
+    await saveUser(user);
+    setCurrentUser(user);
+  };
+
+  const handleCancel = () => {
+    setIsAdding(false);
+    setNewName('');
+    setNewColor(PRESET_COLORS[0]);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-lg">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
+          Kdo jsi?
+        </h1>
+
+        {users.length > 0 && (
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            {users.map((user) => (
+              <button
+                key={user.id}
+                onClick={() => handleSelectUser(user)}
+                className="flex flex-col items-center gap-2 p-4 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition cursor-pointer"
+              >
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold"
+                  style={{ backgroundColor: user.color }}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-sm font-medium text-gray-700 truncate w-full text-center">
+                  {user.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!isAdding ? (
+          <button
+            onClick={() => setIsAdding(true)}
+            className="w-full rounded-xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-blue-400 hover:text-blue-500 py-4 font-medium transition"
+          >
+            + Přidat uživatele
+          </button>
+        ) : (
+          <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
+            <div>
+              <label
+                htmlFor="new-user-name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Jméno
+              </label>
+              <input
+                id="new-user-name"
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
+                placeholder="Tvoje jméno"
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Barva
+              </label>
+              <div className="flex gap-3">
+                {PRESET_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setNewColor(color)}
+                    className="w-10 h-10 rounded-full transition-transform hover:scale-110 flex items-center justify-center"
+                    style={{ backgroundColor: color }}
+                  >
+                    {newColor === color && (
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleCancel}
+                className="flex-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 py-2.5 font-medium transition"
+              >
+                Zrušit
+              </button>
+              <button
+                onClick={handleSaveNewUser}
+                disabled={!newName.trim()}
+                className="flex-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white py-2.5 font-medium transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                Uložit
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,21 +1,19 @@
 import { useState, type FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-function detectRepo(): string | null {
-  const { hostname, pathname } = window.location;
+function detectOwner(): string {
+  const { hostname } = window.location;
   if (hostname.endsWith('.github.io')) {
-    const owner = hostname.replace('.github.io', '');
-    const repo = pathname.split('/')[1];
-    if (owner && repo) return `${owner}/${repo}`;
+    return hostname.replace('.github.io', '');
   }
-  return null;
+  return '';
 }
 
 export default function LoginScreen() {
   const { login, isLoading, error } = useAuth();
-  const detectedRepo = detectRepo();
+  const owner = detectOwner();
   const [token, setToken] = useState('');
-  const [repo, setRepo] = useState(detectedRepo ?? '');
+  const [repo, setRepo] = useState(owner ? `${owner}/koalacolab-data` : '');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -55,25 +53,26 @@ export default function LoginScreen() {
             />
           </div>
 
-          {!detectedRepo && (
-            <div>
-              <label
-                htmlFor="repo"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Repozitář (vlastník/repo)
-              </label>
-              <input
-                id="repo"
-                type="text"
-                value={repo}
-                onChange={(e) => setRepo(e.target.value)}
-                required
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
-                placeholder="jan/koalacolab"
-              />
-            </div>
-          )}
+          <div>
+            <label
+              htmlFor="repo"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Datový repozitář (vlastník/repo)
+            </label>
+            <input
+              id="repo"
+              type="text"
+              value={repo}
+              onChange={(e) => setRepo(e.target.value)}
+              required
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
+              placeholder="jan/koalacolab-data"
+            />
+            <p className="mt-1 text-xs text-gray-400">
+              Privátní repozitář pro ukládání dat
+            </p>
+          </div>
 
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">

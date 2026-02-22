@@ -30,31 +30,20 @@ async function ensureDataBranch(config: AuthConfig): Promise<void> {
 
   if (res.ok) return;
 
-  // Get default branch SHA
-  const repoRes = await fetch(`${API}/repos/${owner}/${repo}`, {
-    headers: headers(token),
-  });
-  if (!repoRes.ok) throw new Error('Nelze přistoupit k repozitáři');
-  const repoData = await repoRes.json();
-
-  const refRes = await fetch(
-    `${API}/repos/${owner}/${repo}/git/ref/heads/${repoData.default_branch}`,
-    { headers: headers(token) },
-  );
-  if (!refRes.ok) throw new Error('Nelze získat výchozí větev');
-  const refData = await refRes.json();
-
-  // Create data branch
-  const createRes = await fetch(`${API}/repos/${owner}/${repo}/git/refs`, {
-    method: 'POST',
+  // Try to seed the data branch by creating an initial file.
+  // This works even on completely empty repos — the GitHub Contents API
+  // creates the branch automatically if it doesn't exist.
+  const seedRes = await fetch(`${API}/repos/${owner}/${repo}/contents/_initialized`, {
+    method: 'PUT',
     headers: headers(token),
     body: JSON.stringify({
-      ref: `refs/heads/${DATA_BRANCH}`,
-      sha: refData.object.sha,
+      message: '[Colabala] Initialize data branch',
+      content: btoa('initialized'),
+      branch: DATA_BRANCH,
     }),
   });
 
-  if (!createRes.ok && createRes.status !== 422) {
+  if (!seedRes.ok && seedRes.status !== 422) {
     throw new Error('Nelze vytvořit datovou větev');
   }
 }

@@ -11,14 +11,25 @@ export default function ShoppingListsPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const [showOthers, setShowOthers] = useState(false);
 
-  const lists = useMemo(
-    () =>
-      Object.values(data.shoppingLists).sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      ),
-    [data.shoppingLists],
-  );
+  const { myLists, otherLists } = useMemo(() => {
+    const all = Object.values(data.shoppingLists).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+    if (!currentUser) return { myLists: all, otherLists: [] };
+    const mine: ShoppingList[] = [];
+    const others: ShoppingList[] = [];
+    for (const list of all) {
+      const ids = list.assignedToIds ?? [];
+      if (ids.length === 0 || ids.includes(currentUser.id)) {
+        mine.push(list);
+      } else {
+        others.push(list);
+      }
+    }
+    return { myLists: mine, otherLists: others };
+  }, [data.shoppingLists, currentUser]);
 
   const handleCreate = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,6 +43,7 @@ export default function ShoppingListsPage() {
       createdAt: new Date().toISOString(),
       tags: [],
       items: {},
+      assignedToIds: [],
     };
 
     await saveShoppingList(list, currentUser.name);
@@ -46,6 +58,88 @@ export default function ShoppingListsPage() {
       checked: items.filter((i) => i.checked).length,
     };
   };
+
+  function renderListCard(list: ShoppingList) {
+    const { total, checked } = getItemCounts(list);
+    const listTags = list.tags
+      .map((tagId) => data.tags[tagId])
+      .filter(Boolean);
+    const assignees = (list.assignedToIds ?? [])
+      .map((id) => data.users[id])
+      .filter(Boolean);
+
+    return (
+      <button
+        key={list.id}
+        onClick={() => navigate(`/shopping/${list.id}`)}
+        className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group"
+      >
+        <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+          {list.title}
+        </h3>
+
+        <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+          <span>
+            {checked}/{total} polozek
+          </span>
+          {total > 0 && (
+            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary-500 rounded-full transition-all"
+                style={{
+                  width: `${total > 0 ? (checked / total) * 100 : 0}%`,
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Assignee avatars */}
+        {assignees.length > 0 && (
+          <div className="mt-2 flex items-center gap-1.5">
+            <span className="flex -space-x-1">
+              {assignees.slice(0, 3).map((user) => (
+                <span
+                  key={user.id}
+                  className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-white"
+                  style={{ backgroundColor: user.color }}
+                  title={user.name}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              ))}
+              {assignees.length > 3 && (
+                <span className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold text-gray-600 bg-gray-200 ring-2 ring-white">
+                  +{assignees.length - 3}
+                </span>
+              )}
+            </span>
+          </div>
+        )}
+
+        <p className="mt-3 text-xs text-gray-400">
+          {list.createdBy}
+        </p>
+
+        {listTags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {listTags.map((tag) => (
+              <span
+                key={tag.id}
+                className="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={{
+                  backgroundColor: `${tag.color}20`,
+                  color: tag.color,
+                }}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </button>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -102,7 +196,7 @@ export default function ShoppingListsPage() {
       )}
 
       {/* Empty state */}
-      {lists.length === 0 && !showForm && (
+      {myLists.length === 0 && otherLists.length === 0 && !showForm && (
         <div className="text-center py-16">
           <p className="text-gray-500 text-sm">
             Zatim zadne seznamy. Vytvorte prvni!
@@ -110,64 +204,37 @@ export default function ShoppingListsPage() {
         </div>
       )}
 
-      {/* Shopping list grid */}
+      {/* My shopping lists */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {lists.map((list) => {
-          const { total, checked } = getItemCounts(list);
-          const listTags = list.tags
-            .map((tagId) => data.tags[tagId])
-            .filter(Boolean);
-
-          return (
-            <button
-              key={list.id}
-              onClick={() => navigate(`/shopping/${list.id}`)}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group"
-            >
-              <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
-                {list.title}
-              </h3>
-
-              <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
-                <span>
-                  {checked}/{total} polozek
-                </span>
-                {total > 0 && (
-                  <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary-500 rounded-full transition-all"
-                      style={{
-                        width: `${total > 0 ? (checked / total) * 100 : 0}%`,
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <p className="mt-3 text-xs text-gray-400">
-                {list.createdBy}
-              </p>
-
-              {listTags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {listTags.map((tag) => (
-                    <span
-                      key={tag.id}
-                      className="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
-                      style={{
-                        backgroundColor: `${tag.color}20`,
-                        color: tag.color,
-                      }}
-                    >
-                      {tag.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </button>
-          );
-        })}
+        {myLists.map(renderListCard)}
       </div>
+
+      {/* Others section */}
+      {otherLists.length > 0 && (
+        <div className="mt-8">
+          <button
+            onClick={() => setShowOthers(!showOthers)}
+            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer mb-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`w-4 h-4 transition-transform ${showOthers ? 'rotate-90' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+            Ostatní ({otherLists.length})
+          </button>
+          {showOthers && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {otherLists.map(renderListCard)}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

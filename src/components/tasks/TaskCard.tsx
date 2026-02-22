@@ -35,9 +35,15 @@ function formatDate(dateStr: string): string {
 export default function TaskCard({ task, users, onStatusChange, onClick }: TaskCardProps) {
   const priority = priorityConfig[task.priority];
   const status = statusConfig[task.status];
-  const assignee = task.assignedTo ? users[task.assignedTo] : null;
+  const assignees = (task.assignedToIds ?? (task.assignedTo ? [task.assignedTo] : []))
+    .map((id) => users[id])
+    .filter(Boolean);
   const overdue = task.status !== 'done' && isOverdue(task.deadline);
   const currentIdx = statusFlow.indexOf(task.status);
+
+  const MAX_AVATARS = 3;
+  const visibleAssignees = assignees.slice(0, MAX_AVATARS);
+  const overflowCount = assignees.length - MAX_AVATARS;
 
   return (
     <div
@@ -67,17 +73,34 @@ export default function TaskCard({ task, users, onStatusChange, onClick }: TaskC
       {/* Bottom row: meta + status controls */}
       <div className="mt-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 text-sm text-gray-500 min-w-0">
-          {/* Assignee */}
-          {assignee && (
+          {/* Assignees - stacked avatars */}
+          {assignees.length > 0 && (
             <span className="flex items-center gap-1.5 min-w-0">
-              <span
-                className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white"
-                style={{ backgroundColor: assignee.color }}
-                title={assignee.name}
-              >
-                {assignee.name.charAt(0).toUpperCase()}
+              <span className="flex -space-x-1.5">
+                {visibleAssignees.map((user) => (
+                  <span
+                    key={user.id}
+                    className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-white"
+                    style={{ backgroundColor: user.color }}
+                    title={user.name}
+                  >
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                ))}
+                {overflowCount > 0 && (
+                  <span
+                    className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold text-gray-600 bg-gray-200 ring-2 ring-white"
+                    title={assignees.slice(MAX_AVATARS).map((u) => u.name).join(', ')}
+                  >
+                    +{overflowCount}
+                  </span>
+                )}
               </span>
-              <span className="truncate">{assignee.name}</span>
+              <span className="truncate">
+                {assignees.length === 1
+                  ? assignees[0].name
+                  : `${assignees.length} osob`}
+              </span>
             </span>
           )}
 

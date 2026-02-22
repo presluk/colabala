@@ -25,10 +25,18 @@ export default function TaskForm({ task, users, onSave, onCancel }: TaskFormProp
   const [description, setDescription] = useState(task?.description ?? '');
   const [status, setStatus] = useState<Task['status']>(task?.status ?? 'todo');
   const [priority, setPriority] = useState<Task['priority']>(task?.priority ?? 'medium');
-  const [assignedTo, setAssignedTo] = useState(task?.assignedTo ?? '');
+  const [assignedToIds, setAssignedToIds] = useState<string[]>(
+    task?.assignedToIds ?? (task?.assignedTo ? [task.assignedTo] : []),
+  );
   const [deadline, setDeadline] = useState(task?.deadline ?? '');
 
   const userList = Object.values(users);
+
+  const toggleUser = (userId: string) => {
+    setAssignedToIds((prev) =>
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId],
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +48,8 @@ export default function TaskForm({ task, users, onSave, onCancel }: TaskFormProp
       description: description.trim(),
       status,
       priority,
-      assignedTo: assignedTo || undefined,
+      assignedTo: assignedToIds[0] ?? undefined,
+      assignedToIds,
       createdBy: task?.createdBy ?? '',
       createdAt: task?.createdAt ?? '',
       deadline: deadline || undefined,
@@ -118,18 +127,31 @@ export default function TaskForm({ task, users, onSave, onCancel }: TaskFormProp
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className={labelClasses}>Prirazeno</label>
-          <select
-            value={assignedTo}
-            onChange={(e) => setAssignedTo(e.target.value)}
-            className={inputClasses}
-          >
-            <option value="">-- Neprirazeno --</option>
+          <div className="space-y-1.5 mt-1">
             {userList.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
+              <label
+                key={user.id}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={assignedToIds.includes(user.id)}
+                  onChange={() => toggleUser(user.id)}
+                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                />
+                <span
+                  className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white"
+                  style={{ backgroundColor: user.color }}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+                <span className="text-sm text-gray-700">{user.name}</span>
+              </label>
             ))}
-          </select>
+            {userList.length === 0 && (
+              <p className="text-sm text-gray-400">Zatim zadni uzivatele</p>
+            )}
+          </div>
         </div>
 
         <div>

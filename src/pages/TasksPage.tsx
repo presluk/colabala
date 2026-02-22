@@ -22,7 +22,7 @@ export default function TasksPage() {
     return Object.values(data.tasks)
       .filter((t) => filters.status === 'all' || t.status === filters.status)
       .filter((t) => filters.priority === 'all' || t.priority === filters.priority)
-      .filter((t) => filters.assignedTo === 'all' || t.assignedTo === filters.assignedTo)
+      .filter((t) => filters.assignedTo === 'all' || (t.assignedToIds ?? []).includes(filters.assignedTo))
       .sort((a, b) => {
         const statusOrder = { todo: 0, in_progress: 1, done: 2 };
         const sd = statusOrder[a.status] - statusOrder[b.status];

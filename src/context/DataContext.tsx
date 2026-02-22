@@ -123,9 +123,25 @@ export function DataProvider({ children }: { children: ReactNode }) {
         if (!user.role) (user as User).role = 'user';
       }
 
+      // Normalize tasks: migrate assignedTo → assignedToIds
+      const normalizedTasks = { ...t.data };
+      for (const task of Object.values(normalizedTasks)) {
+        if (!task.assignedToIds) {
+          (task as Task).assignedToIds = task.assignedTo ? [task.assignedTo] : [];
+        }
+      }
+
+      // Normalize shopping lists: add assignedToIds
+      const normalizedLists = { ...sl.data };
+      for (const list of Object.values(normalizedLists)) {
+        if (!list.assignedToIds) {
+          (list as ShoppingList).assignedToIds = [];
+        }
+      }
+
       setData({
-        shoppingLists: sl.data,
-        tasks: t.data,
+        shoppingLists: normalizedLists,
+        tasks: normalizedTasks,
         notes: n.data,
         tags: tg.data,
         users: normalizedUsers,

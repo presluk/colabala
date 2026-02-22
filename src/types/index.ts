@@ -12,6 +12,7 @@ export interface ShoppingList {
   createdAt: string;
   tags: string[];
   items: Record<string, ShoppingItem>;
+  assignedToIds: string[];
 }
 
 export interface ShoppingItem {
@@ -30,6 +31,7 @@ export interface Task {
   status: 'todo' | 'in_progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   assignedTo?: string;
+  assignedToIds: string[];
   createdBy: string;
   createdAt: string;
   deadline?: string;

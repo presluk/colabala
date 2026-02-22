@@ -61,9 +61,13 @@ export default function DashboardPage() {
                 <div key={task.id} className="flex items-center justify-between p-4">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{task.title}</p>
-                    {task.assignedTo && data.users[task.assignedTo] && (
-                      <p className="text-xs text-gray-400 mt-0.5">{data.users[task.assignedTo].name}</p>
-                    )}
+                    {(() => {
+                      const ids = task.assignedToIds ?? (task.assignedTo ? [task.assignedTo] : []);
+                      const names = ids.map((id) => data.users[id]?.name).filter(Boolean);
+                      return names.length > 0 ? (
+                        <p className="text-xs text-gray-400 mt-0.5">{names.join(', ')}</p>
+                      ) : null;
+                    })()}
                   </div>
                   <span className={`text-sm font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>
                     {new Date(task.deadline!).toLocaleDateString('cs-CZ')}

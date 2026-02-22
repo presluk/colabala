@@ -169,6 +169,43 @@ export default function ShoppingListPage() {
         </p>
       </div>
 
+      {/* Assignees */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+          Prirazeno
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {Object.values(data.users).map((user) => {
+            const assigned = (list.assignedToIds ?? []).includes(user.id);
+            return (
+              <button
+                key={user.id}
+                onClick={async () => {
+                  const ids = list.assignedToIds ?? [];
+                  const updated = assigned
+                    ? ids.filter((uid) => uid !== user.id)
+                    : [...ids, user.id];
+                  await saveShoppingList({ ...list, assignedToIds: updated }, userName);
+                }}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm transition-colors cursor-pointer ${
+                  assigned
+                    ? 'bg-blue-100 text-blue-700 ring-1 ring-blue-300'
+                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                }`}
+              >
+                <span
+                  className="w-4 h-4 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold text-white"
+                  style={{ backgroundColor: user.color }}
+                >
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+                {user.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Items */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50 overflow-hidden">
         {uncheckedItems.length === 0 && checkedItems.length === 0 && (

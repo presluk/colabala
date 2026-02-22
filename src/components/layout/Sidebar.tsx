@@ -70,10 +70,7 @@ export default function Sidebar() {
       {/* App title */}
       <div className="px-6 py-5 border-b border-gray-100">
         <h1 className="text-xl font-bold text-gray-900">
-          <span className="mr-1.5" role="img" aria-label="clipboard">
-            📋
-          </span>
-          Sdílej
+          🐨 KoalaColab
         </h1>
       </div>
 

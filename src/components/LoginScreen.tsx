@@ -19,7 +19,7 @@ export default function LoginScreen() {
             <span className="mr-2" role="img" aria-label="clipboard">
               📋
             </span>
-            Sdílej
+            🐨 KoalaColab
           </h1>
           <p className="text-gray-500 text-lg">Sdílené poznámky a úkoly</p>
         </div>
@@ -61,7 +61,7 @@ export default function LoginScreen() {
               onChange={(e) => setRepo(e.target.value)}
               required
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
-              placeholder="jan/sdilej-data"
+              placeholder="jan/koalacolab-data"
             />
           </div>
 

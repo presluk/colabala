@@ -18,7 +18,7 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-const STORAGE_KEY = 'sdilej_auth';
+const STORAGE_KEY = 'koalacolab_auth';
 
 function parseRepo(repoFullName: string): { owner: string; repo: string } | null {
   const parts = repoFullName.trim().split('/');
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem('sdilej_user');
+    localStorage.removeItem('koalacolab_user');
     setConfig(null);
   }, []);
 

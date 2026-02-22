@@ -12,6 +12,7 @@ import ShoppingListPage from './pages/ShoppingListPage';
 import TasksPage from './pages/TasksPage';
 import NotesPage from './pages/NotesPage';
 import NoteDetailPage from './pages/NoteDetailPage';
+import TrashPage from './pages/TrashPage';
 
 function AppContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -42,6 +43,7 @@ function AppInner() {
         <Route path="tasks" element={<TasksPage />} />
         <Route path="notes" element={<NotesPage />} />
         <Route path="notes/:id" element={<NoteDetailPage />} />
+        <Route path="trash" element={<TrashPage />} />
       </Route>
     </Routes>
   );

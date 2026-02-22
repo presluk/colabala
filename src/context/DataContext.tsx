@@ -15,11 +15,12 @@ import type {
   Tag,
   User,
   ChangelogEntry,
+  TrashItem,
 } from '../types';
 import { useAuth } from './AuthContext';
 import { readJsonFile, writeJsonFile } from '../services/github';
 
-type DataCollection = keyof Omit<AppData, 'changelog'>;
+type DataCollection = keyof Omit<AppData, 'changelog' | 'trash'>;
 
 interface Shas {
   'shopping-lists': string | null;
@@ -28,6 +29,7 @@ interface Shas {
   tags: string | null;
   users: string | null;
   changelog: string | null;
+  trash: string | null;
 }
 
 interface DataState {
@@ -55,6 +57,11 @@ interface DataState {
 
   // Users
   saveUser: (user: User) => Promise<void>;
+
+  // Trash
+  restoreFromTrash: (trashId: string, userName: string) => Promise<void>;
+  permanentDelete: (trashId: string) => Promise<void>;
+  emptyTrash: () => Promise<void>;
 }
 
 const emptyData: AppData = {
@@ -64,6 +71,7 @@ const emptyData: AppData = {
   tags: {},
   users: {},
   changelog: [],
+  trash: [],
 };
 
 const DataContext = createContext<DataState | null>(null);
@@ -83,18 +91,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
     tags: null,
     users: null,
     changelog: null,
+    trash: null,
   });
 
   const loadAll = useCallback(async () => {
     if (!config) return;
     try {
-      const [sl, t, n, tg, u, cl] = await Promise.all([
+      const [sl, t, n, tg, u, cl, tr] = await Promise.all([
         readJsonFile<Record<string, ShoppingList>>(config, 'shopping-lists', {}),
         readJsonFile<Record<string, Task>>(config, 'tasks', {}),
         readJsonFile<Record<string, Note>>(config, 'notes', {}),
         readJsonFile<Record<string, Tag>>(config, 'tags', {}),
         readJsonFile<Record<string, User>>(config, 'users', {}),
         readJsonFile<ChangelogEntry[]>(config, 'changelog', []),
+        readJsonFile<TrashItem[]>(config, 'trash', []),
       ]);
 
       shas.current = {
@@ -104,6 +114,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         tags: tg.sha,
         users: u.sha,
         changelog: cl.sha,
+        trash: tr.sha,
       };
 
       setData({
@@ -113,6 +124,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         tags: tg.data,
         users: u.data,
         changelog: cl.data,
+        trash: tr.data,
       });
       setError(null);
     } catch (e) {
@@ -141,7 +153,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         id: generateId(),
         performedAt: new Date().toISOString(),
       };
-      const updated = [...data.changelog, full].slice(-200); // Keep last 200
+      const updated = [...data.changelog, full].slice(-200);
       const newSha = await writeJsonFile(
         config,
         'changelog',
@@ -153,6 +165,37 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setData((prev) => ({ ...prev, changelog: updated }));
     },
     [config, data.changelog],
+  );
+
+  const saveTrash = useCallback(
+    async (trash: TrashItem[]) => {
+      if (!config) return;
+      const newSha = await writeJsonFile(
+        config,
+        'trash',
+        trash,
+        `[Colabala] Aktualizace koše`,
+        shas.current.trash ?? undefined,
+      );
+      shas.current.trash = newSha;
+      setData((prev) => ({ ...prev, trash }));
+    },
+    [config],
+  );
+
+  const addToTrash = useCallback(
+    async (entityType: TrashItem['entityType'], entityData: ShoppingList | Task | Note, deletedBy: string) => {
+      const trashItem: TrashItem = {
+        id: generateId(),
+        entityType,
+        data: entityData,
+        deletedBy,
+        deletedAt: new Date().toISOString(),
+      };
+      const updated = [...data.trash, trashItem].slice(-50); // Keep last 50
+      await saveTrash(updated);
+    },
+    [data.trash, saveTrash],
   );
 
   // Generic save for record-based collections
@@ -233,18 +276,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const deleteShoppingList = useCallback(
     async (id: string, userName: string) => {
-      const title = data.shoppingLists[id]?.title ?? id;
+      const item = data.shoppingLists[id];
+      if (!item) return;
+      await addToTrash('shoppingList', item, userName);
       await deleteFromCollection<ShoppingList>('shoppingLists', 'shopping-lists', id);
       await addChangelog({
         entityType: 'shoppingList',
         entityId: id,
-        entityTitle: title,
+        entityTitle: item.title,
         action: 'delete',
         performedBy: userName,
-        summary: `Smazal/a seznam "${title}"`,
+        summary: `Smazal/a seznam "${item.title}"`,
       });
     },
-    [data.shoppingLists, deleteFromCollection, addChangelog],
+    [data.shoppingLists, deleteFromCollection, addChangelog, addToTrash],
   );
 
   // Tasks
@@ -268,18 +313,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const deleteTask = useCallback(
     async (id: string, userName: string) => {
-      const title = data.tasks[id]?.title ?? id;
+      const item = data.tasks[id];
+      if (!item) return;
+      await addToTrash('task', item, userName);
       await deleteFromCollection<Task>('tasks', 'tasks', id);
       await addChangelog({
         entityType: 'task',
         entityId: id,
-        entityTitle: title,
+        entityTitle: item.title,
         action: 'delete',
         performedBy: userName,
-        summary: `Smazal/a úkol "${title}"`,
+        summary: `Smazal/a úkol "${item.title}"`,
       });
     },
-    [data.tasks, deleteFromCollection, addChangelog],
+    [data.tasks, deleteFromCollection, addChangelog, addToTrash],
   );
 
   // Notes
@@ -303,18 +350,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const deleteNote = useCallback(
     async (id: string, userName: string) => {
-      const title = data.notes[id]?.title ?? id;
+      const item = data.notes[id];
+      if (!item) return;
+      await addToTrash('note', item, userName);
       await deleteFromCollection<Note>('notes', 'notes', id);
       await addChangelog({
         entityType: 'note',
         entityId: id,
-        entityTitle: title,
+        entityTitle: item.title,
         action: 'delete',
         performedBy: userName,
-        summary: `Smazal/a poznámku "${title}"`,
+        summary: `Smazal/a poznámku "${item.title}"`,
       });
     },
-    [data.notes, deleteFromCollection, addChangelog],
+    [data.notes, deleteFromCollection, addChangelog, addToTrash],
   );
 
   // Tags
@@ -340,6 +389,49 @@ export function DataProvider({ children }: { children: ReactNode }) {
     [saveToCollection],
   );
 
+  // Trash operations
+  const restoreFromTrash = useCallback(
+    async (trashId: string, userName: string) => {
+      const trashItem = data.trash.find((t) => t.id === trashId);
+      if (!trashItem) return;
+
+      // Restore to original collection
+      if (trashItem.entityType === 'shoppingList') {
+        await saveToCollection('shoppingLists', 'shopping-lists', trashItem.data as ShoppingList);
+      } else if (trashItem.entityType === 'task') {
+        await saveToCollection('tasks', 'tasks', trashItem.data as Task);
+      } else if (trashItem.entityType === 'note') {
+        await saveToCollection('notes', 'notes', trashItem.data as Note);
+      }
+
+      // Remove from trash
+      const updated = data.trash.filter((t) => t.id !== trashId);
+      await saveTrash(updated);
+
+      await addChangelog({
+        entityType: trashItem.entityType,
+        entityId: (trashItem.data as { id: string }).id,
+        entityTitle: (trashItem.data as { title: string }).title,
+        action: 'create',
+        performedBy: userName,
+        summary: `Obnovil/a "${(trashItem.data as { title: string }).title}" z koše`,
+      });
+    },
+    [data.trash, saveToCollection, saveTrash, addChangelog],
+  );
+
+  const permanentDelete = useCallback(
+    async (trashId: string) => {
+      const updated = data.trash.filter((t) => t.id !== trashId);
+      await saveTrash(updated);
+    },
+    [data.trash, saveTrash],
+  );
+
+  const emptyTrash = useCallback(async () => {
+    await saveTrash([]);
+  }, [saveTrash]);
+
   return (
     <DataContext.Provider
       value={{
@@ -357,6 +449,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
         saveTag,
         deleteTag,
         saveUser,
+        restoreFromTrash,
+        permanentDelete,
+        emptyTrash,
       }}
     >
       {children}

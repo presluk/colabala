@@ -53,6 +53,14 @@ export interface Tag {
   color: string;
 }
 
+export interface TrashItem {
+  id: string;
+  entityType: 'shoppingList' | 'task' | 'note';
+  data: ShoppingList | Task | Note;
+  deletedBy: string;
+  deletedAt: string;
+}
+
 export interface ChangelogEntry {
   id: string;
   entityType: 'shoppingList' | 'task' | 'note' | 'tag';
@@ -71,6 +79,7 @@ export interface AppData {
   tags: Record<string, Tag>;
   users: Record<string, User>;
   changelog: ChangelogEntry[];
+  trash: TrashItem[];
 }
 
 export type DataFile = 'shopping-lists' | 'tasks' | 'notes' | 'tags' | 'users' | 'changelog';

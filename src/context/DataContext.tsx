@@ -57,7 +57,7 @@ interface DataState {
 
   // Users
   saveUser: (user: User) => Promise<void>;
-  deleteUser: (id: string) => Promise<void>;
+  deleteUser: (id: string, userName: string) => Promise<void>;
 
   // Trash
   restoreFromTrash: (trashId: string, userName: string) => Promise<void>;
@@ -437,10 +437,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
   );
 
   const deleteUser = useCallback(
-    async (id: string) => {
+    async (id: string, userName: string) => {
+      const user = data.users[id];
       await deleteFromCollection<User>('users', 'users', id);
+      await addChangelog({
+        entityType: 'user',
+        entityId: id,
+        entityTitle: user?.name ?? id,
+        action: 'delete',
+        performedBy: userName,
+        summary: `Smazal/a uživatele „${user?.name ?? id}"`,
+        relevantUserIds: [],
+      });
     },
-    [deleteFromCollection],
+    [data.users, deleteFromCollection, addChangelog],
   );
 
   // Trash operations

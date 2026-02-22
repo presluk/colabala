@@ -66,7 +66,7 @@ export interface TrashItem {
 
 export interface ChangelogEntry {
   id: string;
-  entityType: 'shoppingList' | 'task' | 'note' | 'tag';
+  entityType: 'shoppingList' | 'task' | 'note' | 'tag' | 'user';
   entityId: string;
   entityTitle: string;
   action: 'create' | 'update' | 'delete' | 'check' | 'uncheck';

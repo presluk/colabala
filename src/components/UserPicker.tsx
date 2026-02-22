@@ -22,6 +22,16 @@ export default function UserPicker() {
 
   const users = Object.values(data.users);
 
+  // Check if the last logged-in user was an admin (so they can manage users)
+  const lastUser = (() => {
+    try {
+      const stored = localStorage.getItem('colabala_user');
+      if (!stored) return null;
+      return JSON.parse(stored) as User;
+    } catch { return null; }
+  })();
+  const canManageUsers = lastUser?.role === 'admin';
+
   const handleSelectUser = (user: User) => {
     setCurrentUser(user);
   };
@@ -78,15 +88,17 @@ export default function UserPicker() {
                     </span>
                   )}
                 </button>
-                <button
-                  onClick={() => deleteUser(user.id)}
-                  className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-600 shadow-sm"
-                  title="Smazat uživatele"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                {canManageUsers && (
+                  <button
+                    onClick={() => deleteUser(user.id, lastUser!.name)}
+                    className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-600 shadow-sm"
+                    title="Smazat uživatele"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
               </div>
             ))}
           </div>

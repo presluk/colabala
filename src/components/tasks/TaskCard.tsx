@@ -19,8 +19,6 @@ const statusConfig: Record<Task['status'], { label: string; classes: string; hov
   done: { label: 'Hotovo', classes: 'bg-green-100 text-green-700', hoverClasses: 'hover:bg-green-200' },
 };
 
-const statusFlow: Task['status'][] = ['todo', 'in_progress', 'done'];
-
 function isOverdue(deadline: string | undefined): boolean {
   if (!deadline) return false;
   const today = new Date();

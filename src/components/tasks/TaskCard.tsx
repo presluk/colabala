@@ -45,11 +45,40 @@ export default function TaskCard({ task, users, onStatusChange, onClick }: TaskC
   const visibleAssignees = assignees.slice(0, MAX_AVATARS);
   const overflowCount = assignees.length - MAX_AVATARS;
 
+  const nextStatus: Task['status'] =
+    task.status === 'todo' ? 'in_progress' : task.status === 'in_progress' ? 'done' : 'todo';
+
   return (
     <div
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer flex gap-3"
       onClick={onClick}
     >
+      {/* Quick status checkbox */}
+      <div className="pt-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          onClick={() => onStatusChange(nextStatus)}
+          title={`Přepnout na: ${statusConfig[nextStatus].label}`}
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors cursor-pointer ${
+            task.status === 'done'
+              ? 'border-green-500 bg-green-500 text-white'
+              : task.status === 'in_progress'
+                ? 'border-blue-500 bg-blue-500'
+                : 'border-gray-300 dark:border-gray-500 hover:border-gray-400'
+          }`}
+        >
+          {task.status === 'done' && (
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+          {task.status === 'in_progress' && (
+            <span className="w-2 h-2 rounded-full bg-white" />
+          )}
+        </button>
+      </div>
+
+      <div className="flex-1 min-w-0">
       {/* Top row: title + badges */}
       <div className="flex items-start justify-between gap-3">
         <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${task.status === 'done' ? 'line-through opacity-60' : ''}`}>
@@ -140,6 +169,7 @@ export default function TaskCard({ task, users, onStatusChange, onClick }: TaskC
             </button>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

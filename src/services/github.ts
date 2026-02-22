@@ -63,7 +63,7 @@ export async function readFile(
 
   const data = await res.json();
   return {
-    content: atob(data.content),
+    content: new TextDecoder().decode(Uint8Array.from(atob(data.content.replace(/\n/g, '')), c => c.charCodeAt(0))),
     sha: data.sha,
   };
 }
@@ -78,7 +78,7 @@ export async function writeFile(
   const { token, owner, repo } = config;
   const body: Record<string, string> = {
     message,
-    content: btoa(unescape(encodeURIComponent(content))),
+    content: btoa(Array.from(new TextEncoder().encode(content), b => String.fromCharCode(b)).join('')),
     branch: DATA_BRANCH,
   };
   if (sha) body.sha = sha;

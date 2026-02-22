@@ -13,7 +13,7 @@ const PRESET_COLORS = [
 ];
 
 export default function UserPicker() {
-  const { data, saveUser } = useData();
+  const { data, saveUser, deleteUser } = useData();
   const { setCurrentUser } = useUser();
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState('');
@@ -58,26 +58,36 @@ export default function UserPicker() {
         {users.length > 0 && (
           <div className="grid grid-cols-3 gap-4 mb-8">
             {users.map((user) => (
-              <button
-                key={user.id}
-                onClick={() => handleSelectUser(user)}
-                className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition cursor-pointer"
-              >
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold"
-                  style={{ backgroundColor: user.color }}
+              <div key={user.id} className="relative group">
+                <button
+                  onClick={() => handleSelectUser(user)}
+                  className="flex flex-col items-center gap-2 p-4 w-full bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition cursor-pointer"
                 >
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate w-full text-center">
-                  {user.name}
-                </span>
-                {user.role === 'admin' && (
-                  <span className="text-[10px] font-semibold text-amber-600 bg-amber-100 rounded-full px-1.5 py-0.5">
-                    Admin
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold"
+                    style={{ backgroundColor: user.color }}
+                  >
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate w-full text-center">
+                    {user.name}
                   </span>
-                )}
-              </button>
+                  {user.role === 'admin' && (
+                    <span className="text-[10px] font-semibold text-amber-600 bg-amber-100 rounded-full px-1.5 py-0.5">
+                      Admin
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => deleteUser(user.id)}
+                  className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-600 shadow-sm"
+                  title="Smazat uživatele"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             ))}
           </div>
         )}

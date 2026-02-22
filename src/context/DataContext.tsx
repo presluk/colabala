@@ -57,6 +57,7 @@ interface DataState {
 
   // Users
   saveUser: (user: User) => Promise<void>;
+  deleteUser: (id: string) => Promise<void>;
 
   // Trash
   restoreFromTrash: (trashId: string, userName: string) => Promise<void>;
@@ -435,6 +436,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
     [saveToCollection],
   );
 
+  const deleteUser = useCallback(
+    async (id: string) => {
+      await deleteFromCollection<User>('users', 'users', id);
+    },
+    [deleteFromCollection],
+  );
+
   // Trash operations
   const restoreFromTrash = useCallback(
     async (trashId: string, userName: string) => {
@@ -498,6 +506,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         saveTag,
         deleteTag,
         saveUser,
+        deleteUser,
         restoreFromTrash,
         permanentDelete,
         emptyTrash,

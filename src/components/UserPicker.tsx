@@ -18,6 +18,7 @@ export default function UserPicker() {
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const [newColor, setNewColor] = useState(PRESET_COLORS[0]);
+  const [newIsAdmin, setNewIsAdmin] = useState(false);
 
   const users = Object.values(data.users);
 
@@ -33,6 +34,7 @@ export default function UserPicker() {
       id: generateId(),
       name: trimmed,
       color: newColor,
+      role: newIsAdmin ? 'admin' : 'user',
     };
 
     await saveUser(user);
@@ -43,6 +45,7 @@ export default function UserPicker() {
     setIsAdding(false);
     setNewName('');
     setNewColor(PRESET_COLORS[0]);
+    setNewIsAdmin(false);
   };
 
   return (
@@ -69,6 +72,11 @@ export default function UserPicker() {
                 <span className="text-sm font-medium text-gray-700 truncate w-full text-center">
                   {user.name}
                 </span>
+                {user.role === 'admin' && (
+                  <span className="text-[10px] font-semibold text-amber-600 bg-amber-100 rounded-full px-1.5 py-0.5">
+                    Admin
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -132,6 +140,22 @@ export default function UserPicker() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                id="new-user-admin"
+                type="checkbox"
+                checked={newIsAdmin}
+                onChange={(e) => setNewIsAdmin(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-amber-500 focus:ring-amber-500 cursor-pointer"
+              />
+              <label
+                htmlFor="new-user-admin"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Admin
+              </label>
             </div>
 
             <div className="flex gap-3 pt-2">

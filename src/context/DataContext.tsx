@@ -117,12 +117,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
         trash: tr.sha,
       };
 
+      // Normalize users: add default role if missing
+      const normalizedUsers = { ...u.data };
+      for (const user of Object.values(normalizedUsers)) {
+        if (!user.role) (user as User).role = 'user';
+      }
+
       setData({
         shoppingLists: sl.data,
         tasks: t.data,
         notes: n.data,
         tags: tg.data,
-        users: u.data,
+        users: normalizedUsers,
         changelog: cl.data,
         trash: tr.data,
       });

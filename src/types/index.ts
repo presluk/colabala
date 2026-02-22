@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   color: string;
+  role: 'user' | 'admin';
 }
 
 export interface ShoppingList {

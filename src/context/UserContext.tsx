@@ -15,7 +15,9 @@ function loadStoredUser(): User | null {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) return null;
   try {
-    return JSON.parse(stored) as User;
+    const user = JSON.parse(stored) as User;
+    if (!user.role) user.role = 'user';
+    return user;
   } catch {
     localStorage.removeItem(STORAGE_KEY);
     return null;

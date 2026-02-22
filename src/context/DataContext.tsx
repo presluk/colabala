@@ -277,6 +277,24 @@ export function DataProvider({ children }: { children: ReactNode }) {
     [config, data],
   );
 
+  // Helper: resolve userName to userId
+  const findUserId = useCallback(
+    (userName: string): string | undefined =>
+      Object.values(data.users).find((u) => u.name === userName)?.id,
+    [data.users],
+  );
+
+  // Helper: deduplicated relevant user IDs for changelog
+  const buildRelevantIds = useCallback(
+    (userName: string, assignedToIds: string[]): string[] => {
+      const ids = new Set(assignedToIds);
+      const performerId = findUserId(userName);
+      if (performerId) ids.add(performerId);
+      return [...ids];
+    },
+    [findUserId],
+  );
+
   // Shopping Lists
   const saveShoppingList = useCallback(
     async (list: ShoppingList, userName: string) => {
@@ -291,9 +309,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         summary: isNew
           ? `Vytvořil/a seznam "${list.title}"`
           : `Upravil/a seznam "${list.title}"`,
+        relevantUserIds: buildRelevantIds(userName, list.assignedToIds ?? []),
       });
     },
-    [data.shoppingLists, saveToCollection, addChangelog],
+    [data.shoppingLists, saveToCollection, addChangelog, buildRelevantIds],
   );
 
   const deleteShoppingList = useCallback(
@@ -309,9 +328,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         action: 'delete',
         performedBy: userName,
         summary: `Smazal/a seznam "${item.title}"`,
+        relevantUserIds: buildRelevantIds(userName, item.assignedToIds ?? []),
       });
     },
-    [data.shoppingLists, deleteFromCollection, addChangelog, addToTrash],
+    [data.shoppingLists, deleteFromCollection, addChangelog, addToTrash, buildRelevantIds],
   );
 
   // Tasks
@@ -328,9 +348,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         summary: isNew
           ? `Vytvořil/a úkol "${task.title}"`
           : `Upravil/a úkol "${task.title}"`,
+        relevantUserIds: buildRelevantIds(userName, task.assignedToIds ?? []),
       });
     },
-    [data.tasks, saveToCollection, addChangelog],
+    [data.tasks, saveToCollection, addChangelog, buildRelevantIds],
   );
 
   const deleteTask = useCallback(
@@ -346,9 +367,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         action: 'delete',
         performedBy: userName,
         summary: `Smazal/a úkol "${item.title}"`,
+        relevantUserIds: buildRelevantIds(userName, item.assignedToIds ?? []),
       });
     },
-    [data.tasks, deleteFromCollection, addChangelog, addToTrash],
+    [data.tasks, deleteFromCollection, addChangelog, addToTrash, buildRelevantIds],
   );
 
   // Notes
@@ -365,9 +387,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         summary: isNew
           ? `Vytvořil/a poznámku "${note.title}"`
           : `Upravil/a poznámku "${note.title}"`,
+        relevantUserIds: buildRelevantIds(userName, []),
       });
     },
-    [data.notes, saveToCollection, addChangelog],
+    [data.notes, saveToCollection, addChangelog, buildRelevantIds],
   );
 
   const deleteNote = useCallback(
@@ -383,9 +406,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         action: 'delete',
         performedBy: userName,
         summary: `Smazal/a poznámku "${item.title}"`,
+        relevantUserIds: buildRelevantIds(userName, []),
       });
     },
-    [data.notes, deleteFromCollection, addChangelog, addToTrash],
+    [data.notes, deleteFromCollection, addChangelog, addToTrash, buildRelevantIds],
   );
 
   // Tags
@@ -430,6 +454,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const updated = data.trash.filter((t) => t.id !== trashId);
       await saveTrash(updated);
 
+      const restoredAssignees =
+        (trashItem.data as { assignedToIds?: string[] }).assignedToIds ?? [];
       await addChangelog({
         entityType: trashItem.entityType,
         entityId: (trashItem.data as { id: string }).id,
@@ -437,9 +463,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         action: 'create',
         performedBy: userName,
         summary: `Obnovil/a "${(trashItem.data as { title: string }).title}" z koše`,
+        relevantUserIds: buildRelevantIds(userName, restoredAssignees),
       });
     },
-    [data.trash, saveToCollection, saveTrash, addChangelog],
+    [data.trash, saveToCollection, saveTrash, addChangelog, buildRelevantIds],
   );
 
   const permanentDelete = useCallback(

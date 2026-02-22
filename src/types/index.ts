@@ -73,6 +73,7 @@ export interface ChangelogEntry {
   performedBy: string;
   performedAt: string;
   summary: string;
+  relevantUserIds?: string[];
 }
 
 export interface AppData {

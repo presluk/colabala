@@ -3,6 +3,9 @@ import type { ChangelogEntry } from '../../types';
 interface ChangelogTimelineProps {
   entries: ChangelogEntry[];
   limit?: number;
+  filterByUserId?: string | null;
+  isAdmin?: boolean;
+  showAll?: boolean;
 }
 
 function relativeTime(dateStr: string): string {
@@ -34,8 +37,25 @@ const entityIcons: Record<string, string> = {
   tag: '🏷️',
 };
 
-export default function ChangelogTimeline({ entries, limit }: ChangelogTimelineProps) {
-  const sorted = [...entries]
+export default function ChangelogTimeline({
+  entries,
+  limit,
+  filterByUserId,
+  isAdmin,
+  showAll,
+}: ChangelogTimelineProps) {
+  let filtered = entries;
+
+  // Filter unless admin+showAll
+  if (!(isAdmin && showAll) && filterByUserId) {
+    filtered = entries.filter((entry) => {
+      // Backward compat: entries without relevantUserIds are shown to everyone
+      if (!entry.relevantUserIds || entry.relevantUserIds.length === 0) return true;
+      return entry.relevantUserIds.includes(filterByUserId);
+    });
+  }
+
+  const sorted = [...filtered]
     .sort((a, b) => new Date(b.performedAt).getTime() - new Date(a.performedAt).getTime())
     .slice(0, limit);
 

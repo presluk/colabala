@@ -1,9 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useData } from '../context/DataContext';
+import { useUser } from '../context/UserContext';
 import ChangelogTimeline from '../components/changelog/ChangelogTimeline';
 
 export default function DashboardPage() {
   const { data } = useData();
+  const { currentUser } = useUser();
+  const isAdmin = currentUser?.role === 'admin';
+  const [showAllActivity, setShowAllActivity] = useState(isAdmin);
 
   const stats = useMemo(() => {
     const lists = Object.values(data.shoppingLists);
@@ -81,9 +85,25 @@ export default function DashboardPage() {
 
       {/* Activity */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Poslední aktivita</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-gray-900">Poslední aktivita</h2>
+          {isAdmin && (
+            <button
+              onClick={() => setShowAllActivity(!showAllActivity)}
+              className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+            >
+              {showAllActivity ? 'Zobrazit moje' : 'Zobrazit vše'}
+            </button>
+          )}
+        </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <ChangelogTimeline entries={data.changelog} limit={20} />
+          <ChangelogTimeline
+            entries={data.changelog}
+            limit={20}
+            filterByUserId={currentUser?.id ?? null}
+            isAdmin={isAdmin}
+            showAll={showAllActivity}
+          />
         </div>
       </div>
     </div>

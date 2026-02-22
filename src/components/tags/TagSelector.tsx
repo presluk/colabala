@@ -109,7 +109,7 @@ export default function TagSelector({
             setIsOpen(!isOpen);
             setIsCreating(false);
           }}
-          className="inline-flex items-center gap-1 rounded-full border border-dashed border-gray-300 px-2.5 py-0.5 text-xs text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 rounded-full border border-dashed border-gray-300 dark:border-gray-600 px-2.5 py-0.5 text-xs text-gray-500 dark:text-gray-400 hover:border-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +129,7 @@ export default function TagSelector({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-20 mt-1 w-56 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute z-20 mt-1 w-56 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg">
           {!isCreating ? (
             <div className="py-1">
               {unselectedTags.length > 0 ? (
@@ -138,7 +138,7 @@ export default function TagSelector({
                     key={tag.id}
                     type="button"
                     onClick={() => handleAddTag(tag.id)}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                   >
                     <span
                       className="h-3 w-3 rounded-full shrink-0"
@@ -148,17 +148,17 @@ export default function TagSelector({
                   </button>
                 ))
               ) : (
-                <div className="px-3 py-2 text-sm text-gray-400">
+                <div className="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">
                   Žádné další štítky
                 </div>
               )}
 
-              <div className="border-t border-gray-100" />
+              <div className="border-t border-gray-100 dark:border-gray-700" />
 
               <button
                 type="button"
                 onClick={() => setIsCreating(true)}
-                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-primary-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-primary-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +178,7 @@ export default function TagSelector({
           ) : (
             <div className="p-3 space-y-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Nazev stitku
                 </label>
                 <input
@@ -194,12 +194,12 @@ export default function TagSelector({
                     }
                   }}
                   placeholder="Nazev..."
-                  className="w-full rounded-md border border-gray-300 px-2.5 py-1.5 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none"
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-2.5 py-1.5 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Barva
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -235,7 +235,7 @@ export default function TagSelector({
                     setIsCreating(false);
                     setNewName('');
                   }}
-                  className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                 >
                   Zrusit
                 </button>

@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { UserProvider, useUser } from './context/UserContext';
 import { DataProvider, useData } from './context/DataContext';
@@ -51,10 +52,12 @@ function AppInner() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <UserProvider>
-        <AppContent />
-      </UserProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <UserProvider>
+          <AppContent />
+        </UserProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

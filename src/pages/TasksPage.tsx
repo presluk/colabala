@@ -60,7 +60,7 @@ export default function TasksPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Úkoly</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Úkoly</h1>
         <button
           onClick={() => { setEditingTask(undefined); setShowForm(true); }}
           className="px-4 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition cursor-pointer"
@@ -74,7 +74,7 @@ export default function TasksPage() {
       </div>
 
       {(showForm || editingTask) && (
-        <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
           <TaskForm
             task={editingTask}
             users={data.users}
@@ -94,7 +94,7 @@ export default function TasksPage() {
 
       {filtered.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-gray-500">Žádné úkoly k zobrazení</p>
+          <p className="text-gray-500 dark:text-gray-400">Žádné úkoly k zobrazení</p>
         </div>
       )}
 

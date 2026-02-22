@@ -23,8 +23,8 @@ export default function NoteCard({ note, onClick, onPin }: NoteCardProps) {
   return (
     <div
       onClick={onClick}
-      className={`group relative rounded-xl shadow-sm border border-gray-100 p-5 cursor-pointer transition-all hover:shadow-md ${
-        note.pinned ? 'bg-yellow-50' : 'bg-white'
+      className={`group relative rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 cursor-pointer transition-all hover:shadow-md ${
+        note.pinned ? 'bg-yellow-50 dark:bg-yellow-900/20' : 'bg-white dark:bg-gray-800'
       }`}
     >
       {/* Pin button */}
@@ -51,17 +51,17 @@ export default function NoteCard({ note, onClick, onPin }: NoteCardProps) {
       </button>
 
       {/* Title */}
-      <h3 className="text-base font-semibold text-gray-900 pr-8 mb-2 line-clamp-1">
+      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 pr-8 mb-2 line-clamp-1">
         {note.title || 'Bez názvu'}
       </h3>
 
       {/* Content preview */}
-      <p className="text-sm text-gray-500 mb-4 line-clamp-3 min-h-[3rem]">
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-3 min-h-[3rem]">
         {preview || 'Prázdná poznámka'}
       </p>
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-gray-400">
+      <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
         <span>{note.createdBy}</span>
         {formattedDate && <span>{formattedDate}</span>}
       </div>

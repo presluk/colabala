@@ -60,7 +60,7 @@ export default function TrashPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Koš</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Koš</h1>
         {sorted.length > 0 && (
           <button
             onClick={() => setConfirmEmpty(true)}
@@ -74,7 +74,7 @@ export default function TrashPage() {
       {sorted.length === 0 && (
         <div className="text-center py-16">
           <div className="text-5xl mb-4">🗑️</div>
-          <p className="text-gray-500">Koš je prázdný</p>
+          <p className="text-gray-500 dark:text-gray-400">Koš je prázdný</p>
         </div>
       )}
 
@@ -84,12 +84,12 @@ export default function TrashPage() {
           return (
             <div
               key={item.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-4"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 flex items-center gap-4"
             >
               <span className="text-xl">{entityIcons[item.entityType] ?? '📄'}</span>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate">{itemData.title}</p>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{itemData.title}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                   {entityLabels[item.entityType]} · smazal/a {item.deletedBy} · {relativeTime(item.deletedAt)}
                 </p>
               </div>

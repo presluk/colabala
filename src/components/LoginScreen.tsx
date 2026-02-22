@@ -21,23 +21,23 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             🐨 Colabala
           </h1>
-          <p className="text-gray-500 text-lg">Sdílené poznámky a úkoly</p>
+          <p className="text-gray-500 dark:text-gray-400 text-lg">Sdílené poznámky a úkoly</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl shadow-sm p-8 space-y-5"
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 space-y-5"
         >
           <div>
             <label
               htmlFor="token"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Přístupový token
             </label>
@@ -48,7 +48,7 @@ export default function LoginScreen() {
               onChange={(e) => setToken(e.target.value)}
               required
               autoComplete="current-password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
               placeholder="github_pat_..."
             />
           </div>
@@ -56,7 +56,7 @@ export default function LoginScreen() {
           <div>
             <label
               htmlFor="repo"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
             >
               Datový repozitář (vlastník/repo)
             </label>
@@ -66,10 +66,10 @@ export default function LoginScreen() {
               value={repo}
               onChange={(e) => setRepo(e.target.value)}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
               placeholder="jan/colabala-data"
             />
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
               Privátní repozitář pro ukládání dat
             </p>
           </div>

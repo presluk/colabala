@@ -43,7 +43,7 @@ export default function NotesPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Poznámky</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Poznámky</h1>
         <button
           onClick={() => navigate('/notes/new')}
           className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 active:bg-primary-700 rounded-lg transition cursor-pointer"
@@ -68,8 +68,8 @@ export default function NotesPage() {
       {isEmpty && (
         <div className="text-center py-16">
           <div className="text-5xl mb-4">📝</div>
-          <p className="text-gray-500 text-lg mb-2">Zatím žádné poznámky</p>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">Zatím žádné poznámky</p>
+          <p className="text-gray-400 dark:text-gray-500 text-sm">
             Vytvořte první poznámku kliknutím na tlačítko výše.
           </p>
         </div>
@@ -78,7 +78,7 @@ export default function NotesPage() {
       {/* Pinned section */}
       {pinned.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
+          <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
             Připnuté
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -98,7 +98,7 @@ export default function NotesPage() {
       {regular.length > 0 && (
         <div>
           {pinned.length > 0 && (
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">
+            <h2 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
               Ostatní
             </h2>
           )}

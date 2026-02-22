@@ -30,7 +30,7 @@ export default function ShoppingListPage() {
   if (!list) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
-        <p className="text-gray-500">Seznam nebyl nalezen.</p>
+        <p className="text-gray-500 dark:text-gray-400">Seznam nebyl nalezen.</p>
         <button
           onClick={() => navigate('/shopping')}
           className="mt-4 text-primary-600 hover:text-primary-700 text-sm font-medium cursor-pointer"
@@ -106,7 +106,7 @@ export default function ShoppingListPage() {
       {/* Back button */}
       <button
         onClick={() => navigate('/shopping')}
-        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6 cursor-pointer transition-colors"
+        className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mb-6 cursor-pointer transition-colors"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +136,7 @@ export default function ShoppingListPage() {
                 if (e.key === 'Escape') setIsEditingTitle(false);
               }}
               autoFocus
-              className="flex-1 text-2xl font-bold text-gray-900 border-b-2 border-primary-500 focus:outline-none bg-transparent py-1"
+              className="flex-1 text-2xl font-bold text-gray-900 dark:text-gray-100 border-b-2 border-primary-500 focus:outline-none bg-transparent py-1"
             />
             <button
               onClick={handleTitleSave}
@@ -146,7 +146,7 @@ export default function ShoppingListPage() {
             </button>
             <button
               onClick={() => setIsEditingTitle(false)}
-              className="text-sm text-gray-500 hover:text-gray-700 font-medium cursor-pointer"
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium cursor-pointer"
             >
               Zrusit
             </button>
@@ -157,13 +157,13 @@ export default function ShoppingListPage() {
               setEditedTitle(list.title);
               setIsEditingTitle(true);
             }}
-            className="text-2xl font-bold text-gray-900 cursor-pointer hover:text-primary-600 transition-colors"
+            className="text-2xl font-bold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-primary-600 transition-colors"
             title="Klikni pro upravu"
           >
             {list.title}
           </h1>
         )}
-        <p className="text-xs text-gray-400 mt-1">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
           Vytvoril/a {list.createdBy} &middot;{' '}
           {new Date(list.createdAt).toLocaleDateString('cs-CZ')}
         </p>
@@ -171,7 +171,7 @@ export default function ShoppingListPage() {
 
       {/* Assignees */}
       <div className="mb-6">
-        <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
           Prirazeno
         </label>
         <div className="flex flex-wrap gap-2">
@@ -190,7 +190,7 @@ export default function ShoppingListPage() {
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm transition-colors cursor-pointer ${
                   assigned
                     ? 'bg-blue-100 text-blue-700 ring-1 ring-blue-300'
-                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200'
                 }`}
               >
                 <span
@@ -207,9 +207,9 @@ export default function ShoppingListPage() {
       </div>
 
       {/* Items */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 divide-y divide-gray-50 dark:divide-gray-700 overflow-hidden">
         {uncheckedItems.length === 0 && checkedItems.length === 0 && (
-          <div className="px-4 py-8 text-center text-sm text-gray-400">
+          <div className="px-4 py-8 text-center text-sm text-gray-400 dark:text-gray-500">
             Seznam je prazdny. Pridejte prvni polozku.
           </div>
         )}
@@ -224,8 +224,8 @@ export default function ShoppingListPage() {
         ))}
 
         {checkedItems.length > 0 && uncheckedItems.length > 0 && (
-          <div className="px-4 py-2 bg-gray-50">
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+          <div className="px-4 py-2 bg-gray-50 dark:bg-gray-900">
+            <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
               Hotovo ({checkedItems.length})
             </span>
           </div>
@@ -247,7 +247,7 @@ export default function ShoppingListPage() {
       </div>
 
       {/* Delete list */}
-      <div className="mt-10 pt-6 border-t border-gray-100">
+      <div className="mt-10 pt-6 border-t border-gray-100 dark:border-gray-700">
         <button
           onClick={handleDeleteList}
           className="text-sm text-red-500 hover:text-red-600 font-medium cursor-pointer transition-colors"

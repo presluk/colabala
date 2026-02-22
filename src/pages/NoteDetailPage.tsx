@@ -59,7 +59,7 @@ function NoteForm({ noteId }: { noteId: string }) {
     <div className="max-w-3xl mx-auto">
       <button
         onClick={() => navigate('/notes')}
-        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6 cursor-pointer"
+        className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mb-6 cursor-pointer"
       >
         <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -67,18 +67,18 @@ function NoteForm({ noteId }: { noteId: string }) {
         Zpět na poznámky
       </button>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <div className="flex items-center gap-3 mb-4">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Název poznámky"
-            className="flex-1 text-xl font-bold text-gray-900 border-none outline-none placeholder-gray-300"
+            className="flex-1 text-xl font-bold text-gray-900 dark:text-gray-100 border-none outline-none placeholder-gray-300 dark:placeholder-gray-600 bg-transparent"
           />
           <button
             onClick={() => setPinned(!pinned)}
-            className={`p-2 rounded-lg transition cursor-pointer ${pinned ? 'text-amber-500 bg-amber-50' : 'text-gray-300 hover:text-amber-400'}`}
+            className={`p-2 rounded-lg transition cursor-pointer ${pinned ? 'text-amber-500 bg-amber-50' : 'text-gray-300 dark:text-gray-600 hover:text-amber-400'}`}
             title={pinned ? 'Odepnout' : 'Připnout'}
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -92,11 +92,11 @@ function NoteForm({ noteId }: { noteId: string }) {
           onChange={(e) => setContent(e.target.value)}
           placeholder="Začněte psát..."
           rows={16}
-          className="w-full text-gray-700 border-none outline-none resize-none placeholder-gray-300 leading-relaxed"
+          className="w-full text-gray-700 dark:text-gray-300 border-none outline-none resize-none placeholder-gray-300 dark:placeholder-gray-600 leading-relaxed bg-transparent"
         />
 
         {existing && (
-          <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-400 flex gap-4">
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500 flex gap-4">
             <span>Vytvořil/a: {existing.createdBy}</span>
             <span>Naposledy upravil/a: {existing.lastEditedBy}</span>
           </div>

@@ -49,9 +49,9 @@ export default function UserPicker() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <div className="w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center mb-8">
           Kdo jsi?
         </h1>
 
@@ -61,7 +61,7 @@ export default function UserPicker() {
               <button
                 key={user.id}
                 onClick={() => handleSelectUser(user)}
-                className="flex flex-col items-center gap-2 p-4 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition cursor-pointer"
+                className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition cursor-pointer"
               >
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold"
@@ -69,7 +69,7 @@ export default function UserPicker() {
                 >
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-gray-700 truncate w-full text-center">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate w-full text-center">
                   {user.name}
                 </span>
                 {user.role === 'admin' && (
@@ -85,16 +85,16 @@ export default function UserPicker() {
         {!isAdding ? (
           <button
             onClick={() => setIsAdding(true)}
-            className="w-full rounded-xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-blue-400 hover:text-blue-500 py-4 font-medium transition"
+            className="w-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-500 py-4 font-medium transition"
           >
             + Přidat uživatele
           </button>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 space-y-4">
             <div>
               <label
                 htmlFor="new-user-name"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
               >
                 Jméno
               </label>
@@ -103,14 +103,14 @@ export default function UserPicker() {
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition"
                 placeholder="Tvoje jméno"
                 autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Barva
               </label>
               <div className="flex gap-3">
@@ -148,11 +148,11 @@ export default function UserPicker() {
                 type="checkbox"
                 checked={newIsAdmin}
                 onChange={(e) => setNewIsAdmin(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-amber-500 focus:ring-amber-500 cursor-pointer"
               />
               <label
                 htmlFor="new-user-admin"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer"
               >
                 Admin
               </label>
@@ -161,7 +161,7 @@ export default function UserPicker() {
             <div className="flex gap-3 pt-2">
               <button
                 onClick={handleCancel}
-                className="flex-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 py-2.5 font-medium transition"
+                className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 py-2.5 font-medium transition"
               >
                 Zrušit
               </button>

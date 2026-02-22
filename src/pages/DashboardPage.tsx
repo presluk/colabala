@@ -36,20 +36,20 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Přehled</h1>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Přehled</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-500">Nákupní seznamy</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Nákupní seznamy</p>
           <p className="text-3xl font-bold text-primary-600 mt-1">{stats.activeLists}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-500">Aktivní úkoly</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Aktivní úkoly</p>
           <p className="text-3xl font-bold text-amber-500 mt-1">{stats.inProgressTasks}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-500">Poznámky</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+          <p className="text-sm text-gray-500 dark:text-gray-400">Poznámky</p>
           <p className="text-3xl font-bold text-green-600 mt-1">{stats.totalNotes}</p>
         </div>
       </div>
@@ -57,23 +57,23 @@ export default function DashboardPage() {
       {/* Upcoming deadlines */}
       {upcomingDeadlines.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">Blížící se termíny</h2>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Blížící se termíny</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 divide-y divide-gray-50 dark:divide-gray-700">
             {upcomingDeadlines.map((task) => {
               const isOverdue = new Date(task.deadline!) < new Date();
               return (
                 <div key={task.id} className="flex items-center justify-between p-4">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{task.title}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{task.title}</p>
                     {(() => {
                       const ids = task.assignedToIds ?? (task.assignedTo ? [task.assignedTo] : []);
                       const names = ids.map((id) => data.users[id]?.name).filter(Boolean);
                       return names.length > 0 ? (
-                        <p className="text-xs text-gray-400 mt-0.5">{names.join(', ')}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{names.join(', ')}</p>
                       ) : null;
                     })()}
                   </div>
-                  <span className={`text-sm font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500'}`}>
+                  <span className={`text-sm font-medium ${isOverdue ? 'text-red-600' : 'text-gray-500 dark:text-gray-400'}`}>
                     {new Date(task.deadline!).toLocaleDateString('cs-CZ')}
                   </span>
                 </div>
@@ -86,17 +86,17 @@ export default function DashboardPage() {
       {/* Activity */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">Poslední aktivita</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Poslední aktivita</h2>
           {isAdmin && (
             <button
               onClick={() => setShowAllActivity(!showAllActivity)}
-              className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
+              className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer"
             >
               {showAllActivity ? 'Zobrazit moje' : 'Zobrazit vše'}
             </button>
           )}
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
           <ChangelogTimeline
             entries={data.changelog}
             limit={20}

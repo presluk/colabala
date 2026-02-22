@@ -60,7 +60,7 @@ export default function ChangelogTimeline({
     .slice(0, limit);
 
   if (sorted.length === 0) {
-    return <p className="text-sm text-gray-400 py-4">Zatím žádná aktivita</p>;
+    return <p className="text-sm text-gray-400 dark:text-gray-500 py-4">Zatím žádná aktivita</p>;
   }
 
   return (
@@ -69,15 +69,15 @@ export default function ChangelogTimeline({
         <div key={entry.id} className="flex gap-3 py-3">
           <div className="flex flex-col items-center">
             <div className={`w-2.5 h-2.5 rounded-full mt-1.5 ${actionColors[entry.action] ?? 'bg-gray-400'}`} />
-            {i < sorted.length - 1 && <div className="w-px flex-1 bg-gray-200 mt-1" />}
+            {i < sorted.length - 1 && <div className="w-px flex-1 bg-gray-200 dark:bg-gray-600 mt-1" />}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
               <span className="mr-1">{entityIcons[entry.entityType] ?? ''}</span>
               <span className="font-medium">{entry.performedBy}</span>{' '}
               {entry.summary}
             </p>
-            <p className="text-xs text-gray-400 mt-0.5">{relativeTime(entry.performedAt)}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{relativeTime(entry.performedAt)}</p>
           </div>
         </div>
       ))}

@@ -72,18 +72,18 @@ export default function ShoppingListsPage() {
       <button
         key={list.id}
         onClick={() => navigate(`/shopping/${list.id}`)}
-        className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 text-left hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 text-left hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition-all cursor-pointer group"
       >
-        <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+        <h3 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary-600 transition-colors truncate">
           {list.title}
         </h3>
 
-        <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+        <div className="mt-2 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <span>
             {checked}/{total} polozek
           </span>
           {total > 0 && (
-            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary-500 rounded-full transition-all"
                 style={{
@@ -101,7 +101,7 @@ export default function ShoppingListsPage() {
               {assignees.slice(0, 3).map((user) => (
                 <span
                   key={user.id}
-                  className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-white"
+                  className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-white dark:ring-gray-800"
                   style={{ backgroundColor: user.color }}
                   title={user.name}
                 >
@@ -109,7 +109,7 @@ export default function ShoppingListsPage() {
                 </span>
               ))}
               {assignees.length > 3 && (
-                <span className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold text-gray-600 bg-gray-200 ring-2 ring-white">
+                <span className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[9px] font-bold text-gray-600 dark:text-gray-400 bg-gray-200 ring-2 ring-white dark:ring-gray-800">
                   +{assignees.length - 3}
                 </span>
               )}
@@ -117,7 +117,7 @@ export default function ShoppingListsPage() {
           </div>
         )}
 
-        <p className="mt-3 text-xs text-gray-400">
+        <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
           {list.createdBy}
         </p>
 
@@ -145,7 +145,7 @@ export default function ShoppingListsPage() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Nákupní seznamy
         </h1>
         <button
@@ -160,9 +160,9 @@ export default function ShoppingListsPage() {
       {showForm && (
         <form
           onSubmit={handleCreate}
-          className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-5"
+          className="mb-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5"
         >
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Název seznamu
           </label>
           <div className="flex gap-3">
@@ -172,7 +172,7 @@ export default function ShoppingListsPage() {
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder="napr. Vikendovy nakup"
               autoFocus
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none transition-colors"
+              className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none transition-colors dark:bg-gray-800"
             />
             <button
               type="submit"
@@ -187,7 +187,7 @@ export default function ShoppingListsPage() {
                 setShowForm(false);
                 setNewTitle('');
               }}
-              className="rounded-lg border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none transition-colors cursor-pointer"
+              className="rounded-lg border border-gray-300 dark:border-gray-600 px-5 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-gray-200 focus:outline-none transition-colors cursor-pointer"
             >
               Zrusit
             </button>
@@ -198,7 +198,7 @@ export default function ShoppingListsPage() {
       {/* Empty state */}
       {myLists.length === 0 && otherLists.length === 0 && !showForm && (
         <div className="text-center py-16">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
             Zatim zadne seznamy. Vytvorte prvni!
           </p>
         </div>
@@ -214,7 +214,7 @@ export default function ShoppingListsPage() {
         <div className="mt-8">
           <button
             onClick={() => setShowOthers(!showOthers)}
-            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors cursor-pointer mb-4"
+            className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer mb-4"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

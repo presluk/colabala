@@ -11,26 +11,26 @@ export default function ShoppingItem({ item, onToggle, onDelete }: ShoppingItemP
     <div
       className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
         item.checked
-          ? 'bg-gray-50 opacity-70'
-          : 'bg-white hover:bg-gray-50'
+          ? 'bg-gray-50 dark:bg-gray-900 opacity-70'
+          : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
       }`}
     >
       <input
         type="checkbox"
         checked={item.checked}
         onChange={onToggle}
-        className="h-5 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer shrink-0"
+        className="h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500 cursor-pointer shrink-0"
       />
 
       <div className="flex-1 min-w-0">
         <span
           className={`block text-sm ${
-            item.checked ? 'line-through text-gray-400' : 'text-gray-900'
+            item.checked ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-gray-100'
           }`}
         >
           {item.text}
         </span>
-        <span className="block text-xs text-gray-400 mt-0.5">
+        <span className="block text-xs text-gray-400 dark:text-gray-500 mt-0.5">
           {item.addedBy}
           {item.checked && item.checkedBy && (
             <> &middot; odskrtnul/a {item.checkedBy}</>
@@ -40,7 +40,7 @@ export default function ShoppingItem({ item, onToggle, onDelete }: ShoppingItemP
 
       <button
         onClick={onDelete}
-        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer"
+        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1.5 rounded-md text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer"
         title="Smazat"
       >
         <svg

@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const navItems = [
   {
@@ -78,12 +79,13 @@ const navItems = [
 export default function Sidebar() {
   const { currentUser, clearUser } = useUser();
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
       {/* App title */}
-      <div className="px-6 py-5 border-b border-gray-100">
-        <h1 className="text-xl font-bold text-gray-900">
+      <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           🐨 Colabala
         </h1>
       </div>
@@ -98,8 +100,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
                 isActive
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
               }`
             }
           >
@@ -110,7 +112,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom section: current user + actions */}
-      <div className="border-t border-gray-200 px-4 py-4 space-y-3">
+      <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-4 space-y-3">
         {currentUser && (
           <div className="flex items-center gap-3">
             <div
@@ -119,22 +121,39 @@ export default function Sidebar() {
             >
               {currentUser.name.charAt(0).toUpperCase()}
             </div>
-            <span className="text-sm font-medium text-gray-700 truncate">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
               {currentUser.name}
             </span>
           </div>
         )}
 
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-full text-left text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-1 py-1 transition flex items-center gap-2"
+        >
+          {theme === 'dark' ? (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          )}
+          {theme === 'dark' ? 'Světlý režim' : 'Tmavý režim'}
+        </button>
+
         <button
           onClick={clearUser}
-          className="w-full text-left text-sm text-gray-500 hover:text-gray-700 px-1 py-1 transition"
+          className="w-full text-left text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-1 py-1 transition"
         >
           Změnit uživatele
         </button>
 
         <button
           onClick={logout}
-          className="w-full text-left text-sm text-red-500 hover:text-red-700 px-1 py-1 transition"
+          className="w-full text-left text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 px-1 py-1 transition"
         >
           Odhlásit
         </button>

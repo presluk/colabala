@@ -18,19 +18,29 @@ export default function TasksPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>();
 
+  // For multi-assignee tasks, derive an effective status from current user's perspective
+  const effectiveStatus = (t: Task): Task['status'] => {
+    const isMulti = (t.assignedToIds ?? []).length >= 2;
+    if (!isMulti || !currentUser) return t.status;
+    const completed = (t.completedByIds ?? []).includes(currentUser.id);
+    if (completed) return 'done';
+    const anyCompleted = (t.completedByIds ?? []).length > 0;
+    return anyCompleted ? 'in_progress' : 'todo';
+  };
+
   const filtered = useMemo(() => {
     return Object.values(data.tasks)
-      .filter((t) => filters.status === 'all' || t.status === filters.status)
+      .filter((t) => filters.status === 'all' || effectiveStatus(t) === filters.status)
       .filter((t) => filters.priority === 'all' || t.priority === filters.priority)
       .filter((t) => filters.assignedTo === 'all' || (t.assignedToIds ?? []).includes(filters.assignedTo))
       .sort((a, b) => {
         const statusOrder = { todo: 0, in_progress: 1, done: 2 };
-        const sd = statusOrder[a.status] - statusOrder[b.status];
+        const sd = statusOrder[effectiveStatus(a)] - statusOrder[effectiveStatus(b)];
         if (sd !== 0) return sd;
         const priorityOrder = { high: 0, medium: 1, low: 2 };
         return priorityOrder[a.priority] - priorityOrder[b.priority];
       });
-  }, [data.tasks, filters]);
+  }, [data.tasks, filters, currentUser]);
 
   const userName = currentUser?.name ?? 'Anonym';
 
@@ -50,6 +60,29 @@ export default function TasksPage() {
     const task = data.tasks[taskId];
     if (!task) return;
     await saveTask({ ...task, status }, userName);
+  };
+
+  const handleToggleCompletion = async (taskId: string) => {
+    const task = data.tasks[taskId];
+    if (!task || !currentUser) return;
+
+    const completedByIds = task.completedByIds ?? [];
+    const isCompleted = completedByIds.includes(currentUser.id);
+    const newCompletedByIds = isCompleted
+      ? completedByIds.filter((id) => id !== currentUser.id)
+      : [...completedByIds, currentUser.id];
+
+    const assigneeCount = (task.assignedToIds ?? []).length;
+    let newStatus: Task['status'];
+    if (newCompletedByIds.length === assigneeCount) {
+      newStatus = 'done';
+    } else if (newCompletedByIds.length > 0) {
+      newStatus = 'in_progress';
+    } else {
+      newStatus = 'todo';
+    }
+
+    await saveTask({ ...task, completedByIds: newCompletedByIds, status: newStatus }, userName);
   };
 
   const handleDelete = async (taskId: string) => {
@@ -104,7 +137,9 @@ export default function TasksPage() {
             key={task.id}
             task={task}
             users={data.users}
+            currentUserId={currentUser?.id}
             onStatusChange={(status) => handleStatusChange(task.id, status)}
+            onToggleCompletion={() => handleToggleCompletion(task.id)}
             onClick={() => { setEditingTask(task); setShowForm(false); }}
           />
         ))}

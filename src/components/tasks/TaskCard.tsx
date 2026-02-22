@@ -3,7 +3,9 @@ import type { Task, User } from '../../types';
 interface TaskCardProps {
   task: Task;
   users: Record<string, User>;
+  currentUserId?: string;
   onStatusChange: (status: Task['status']) => void;
+  onToggleCompletion?: () => void;
   onClick: () => void;
 }
 
@@ -30,13 +32,19 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('cs-CZ');
 }
 
-export default function TaskCard({ task, users, onStatusChange, onClick }: TaskCardProps) {
+export default function TaskCard({ task, users, currentUserId, onStatusChange, onToggleCompletion, onClick }: TaskCardProps) {
   const priority = priorityConfig[task.priority];
   const status = statusConfig[task.status];
   const assignees = (task.assignedToIds ?? (task.assignedTo ? [task.assignedTo] : []))
     .map((id) => users[id])
     .filter(Boolean);
-  const overdue = task.status !== 'done' && isOverdue(task.deadline);
+  const completedByIds = task.completedByIds ?? [];
+  const isMultiAssignee = assignees.length >= 2;
+  const currentUserCompleted = currentUserId ? completedByIds.includes(currentUserId) : false;
+
+  // For multi-assignee tasks, "done" is per-user; for single, use global status
+  const effectivelyDone = isMultiAssignee ? currentUserCompleted : task.status === 'done';
+  const overdue = !effectivelyDone && isOverdue(task.deadline);
 
   const MAX_AVATARS = 3;
   const visibleAssignees = assignees.slice(0, MAX_AVATARS);
@@ -45,6 +53,9 @@ export default function TaskCard({ task, users, onStatusChange, onClick }: TaskC
   const nextStatus: Task['status'] =
     task.status === 'todo' ? 'in_progress' : task.status === 'in_progress' ? 'done' : 'todo';
 
+  const completionCount = completedByIds.length;
+  const completionTotal = assignees.length;
+
   return (
     <div
       className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer"
@@ -52,25 +63,45 @@ export default function TaskCard({ task, users, onStatusChange, onClick }: TaskC
     >
       {/* Top row: title + badges */}
       <div className="flex items-start justify-between gap-3">
-        <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${task.status === 'done' ? 'line-through opacity-60' : ''}`}>
+        <h3 className={`font-semibold text-gray-900 dark:text-gray-100 ${effectivelyDone ? 'line-through opacity-60' : ''}`}>
           {task.title}
         </h3>
         <div className="flex items-center gap-2 shrink-0">
           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${priority.classes}`}>
             {priority.label}
           </span>
-          {/* Clickable status badge — cycles to next status */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onStatusChange(nextStatus);
-            }}
-            title={`Klikni → ${statusConfig[nextStatus].label}`}
-            className={`text-xs font-medium px-2 py-0.5 rounded-full cursor-pointer transition-colors ${status.classes} ${status.hoverClasses}`}
-          >
-            {status.label}
-          </button>
+          {/* Clickable status badge — per-user toggle for multi-assignee, cycle for single */}
+          {isMultiAssignee ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleCompletion?.();
+              }}
+              title={currentUserCompleted ? 'Klikni → zrušit dokončení' : 'Klikni → označit jako hotovo'}
+              className={`text-xs font-medium px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                completionCount === completionTotal
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : completionCount > 0
+                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
+            >
+              {completionCount}/{completionTotal} hotovo
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onStatusChange(nextStatus);
+              }}
+              title={`Klikni → ${statusConfig[nextStatus].label}`}
+              className={`text-xs font-medium px-2 py-0.5 rounded-full cursor-pointer transition-colors ${status.classes} ${status.hoverClasses}`}
+            >
+              {status.label}
+            </button>
+          )}
         </div>
       </div>
 
@@ -88,11 +119,18 @@ export default function TaskCard({ task, users, onStatusChange, onClick }: TaskC
               {visibleAssignees.map((user) => (
                 <span
                   key={user.id}
-                  className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-white dark:ring-gray-800"
+                  className="relative w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-white dark:ring-gray-800"
                   style={{ backgroundColor: user.color }}
-                  title={user.name}
+                  title={`${user.name}${isMultiAssignee && completedByIds.includes(user.id) ? ' (hotovo)' : ''}`}
                 >
                   {user.name.charAt(0).toUpperCase()}
+                  {isMultiAssignee && completedByIds.includes(user.id) && (
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center ring-1 ring-white dark:ring-gray-800">
+                      <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                  )}
                 </span>
               ))}
               {overflowCount > 0 && (

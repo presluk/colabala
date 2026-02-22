@@ -18,6 +18,7 @@ import type {
   TrashItem,
 } from '../types';
 import { useAuth } from './AuthContext';
+import { useUser } from './UserContext';
 import { readJsonFile, writeJsonFile } from '../services/github';
 
 type DataCollection = keyof Omit<AppData, 'changelog' | 'trash'>;
@@ -81,6 +82,7 @@ const REFRESH_INTERVAL = 30_000;
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const { config } = useAuth();
+  const { syncWithLiveData } = useUser();
   const [data, setData] = useState<AppData>(emptyData);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -124,11 +126,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
         if (!user.role) (user as User).role = 'user';
       }
 
-      // Normalize tasks: migrate assignedTo → assignedToIds
+      // Normalize tasks: migrate assignedTo → assignedToIds, init completedByIds
       const normalizedTasks = { ...t.data };
       for (const task of Object.values(normalizedTasks)) {
         if (!task.assignedToIds) {
           (task as Task).assignedToIds = task.assignedTo ? [task.assignedTo] : [];
+        }
+        if (!task.completedByIds) {
+          (task as Task).completedByIds = [];
         }
       }
 
@@ -149,11 +154,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
         changelog: cl.data,
         trash: tr.data,
       });
+      syncWithLiveData(normalizedUsers);
       setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Chyba načítání dat');
     }
-  }, [config]);
+  }, [config, syncWithLiveData]);
 
   const refresh = useCallback(async () => {
     await loadAll();

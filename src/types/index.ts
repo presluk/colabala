@@ -36,6 +36,7 @@ export interface Task {
   createdAt: string;
   deadline?: string;
   tags: string[];
+  completedByIds?: string[];
 }
 
 export interface Note {

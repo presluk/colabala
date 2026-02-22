@@ -5,6 +5,7 @@ interface UserState {
   currentUser: User | null;
   setCurrentUser: (user: User) => void;
   clearUser: () => void;
+  syncWithLiveData: (users: Record<string, User>) => void;
 }
 
 const UserContext = createContext<UserState | null>(null);
@@ -37,8 +38,21 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setCurrentUserState(null);
   }, []);
 
+  // Sync stored user with live server data (role, name, color may have changed)
+  const syncWithLiveData = useCallback((users: Record<string, User>) => {
+    setCurrentUserState((prev) => {
+      if (!prev) return null;
+      const live = users[prev.id];
+      if (!live) return prev;
+      // Only update if something actually changed
+      if (live.name === prev.name && live.color === prev.color && live.role === prev.role) return prev;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(live));
+      return live;
+    });
+  }, []);
+
   return (
-    <UserContext.Provider value={{ currentUser, setCurrentUser, clearUser }}>
+    <UserContext.Provider value={{ currentUser, setCurrentUser, clearUser, syncWithLiveData }}>
       {children}
     </UserContext.Provider>
   );

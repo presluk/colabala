@@ -42,6 +42,15 @@ export default function TaskForm({ task, users, onSave, onCancel }: TaskFormProp
     e.preventDefault();
     if (!title.trim()) return;
 
+    // Sync completedByIds with status changes
+    let completedByIds = task?.completedByIds ?? [];
+    if (status === 'done') {
+      completedByIds = [...assignedToIds];
+    } else if (task?.status === 'done') {
+      // Status changed away from 'done' — clear completions
+      completedByIds = [];
+    }
+
     onSave({
       id: task?.id ?? '',
       title: title.trim(),
@@ -54,6 +63,7 @@ export default function TaskForm({ task, users, onSave, onCancel }: TaskFormProp
       createdAt: task?.createdAt ?? '',
       deadline: deadline || undefined,
       tags: task?.tags ?? [],
+      completedByIds,
     });
   };
 

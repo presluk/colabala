@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import type { User } from '../types';
 
 interface UserState {
@@ -11,19 +11,19 @@ const UserContext = createContext<UserState | null>(null);
 
 const STORAGE_KEY = 'sdilej_user';
 
-export function UserProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUserState] = useState<User | null>(null);
+function loadStoredUser(): User | null {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as User;
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setCurrentUserState(JSON.parse(stored) as User);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    }
-  }, []);
+export function UserProvider({ children }: { children: ReactNode }) {
+  const [currentUser, setCurrentUserState] = useState<User | null>(loadStoredUser);
 
   const setCurrentUser = useCallback((user: User) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));

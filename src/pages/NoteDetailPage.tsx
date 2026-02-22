@@ -1,30 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData, generateId } from '../context/DataContext';
 import { useUser } from '../context/UserContext';
 import ConfirmDialog from '../components/shared/ConfirmDialog';
 
-export default function NoteDetailPage() {
-  const { id } = useParams<{ id: string }>();
+function NoteForm({ noteId }: { noteId: string }) {
   const navigate = useNavigate();
   const { data, saveNote, deleteNote } = useData();
   const { currentUser } = useUser();
 
-  const isNew = id === 'new';
-  const existing = !isNew && id ? data.notes[id] : null;
+  const isNew = noteId === 'new';
+  const existing = !isNew ? data.notes[noteId] : null;
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [pinned, setPinned] = useState(false);
+  const [title, setTitle] = useState(existing?.title ?? '');
+  const [content, setContent] = useState(existing?.content ?? '');
+  const [pinned, setPinned] = useState(existing?.pinned ?? false);
   const [showDelete, setShowDelete] = useState(false);
-
-  useEffect(() => {
-    if (existing) {
-      setTitle(existing.title);
-      setContent(existing.content);
-      setPinned(existing.pinned);
-    }
-  }, [existing]);
 
   const userName = currentUser?.name ?? 'Anonym';
 
@@ -140,4 +131,10 @@ export default function NoteDetailPage() {
       />
     </div>
   );
+}
+
+export default function NoteDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  // Use key to remount when ID changes, avoiding stale state
+  return <NoteForm key={id} noteId={id ?? 'new'} />;
 }

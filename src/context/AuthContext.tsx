@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { validateToken, initializeStorage } from '../services/github';
 
 interface AuthConfig {
@@ -26,32 +26,38 @@ function parseRepo(repoFullName: string): { owner: string; repo: string } | null
   return { owner: parts[0], repo: parts[1] };
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<AuthConfig | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+function loadStoredConfig(): AuthConfig | null {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as AuthConfig;
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+}
 
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const initialConfig = loadStoredConfig();
+  const [config, setConfig] = useState<AuthConfig | null>(null);
+  const [isLoading, setIsLoading] = useState(initialConfig !== null);
+  const [error, setError] = useState<string | null>(null);
+  const didValidate = useRef(false);
+
+  // Validate stored config on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as AuthConfig;
-        validateToken(parsed).then((valid) => {
-          if (valid) {
-            setConfig(parsed);
-          } else {
-            localStorage.removeItem(STORAGE_KEY);
-          }
-          setIsLoading(false);
-        });
-      } catch {
+    if (didValidate.current || !initialConfig) return;
+    didValidate.current = true;
+
+    validateToken(initialConfig).then((valid) => {
+      if (valid) {
+        setConfig(initialConfig);
+      } else {
         localStorage.removeItem(STORAGE_KEY);
-        setIsLoading(false);
       }
-    } else {
       setIsLoading(false);
-    }
-  }, []);
+    });
+  });
 
   const login = useCallback(async (token: string, repoFullName: string): Promise<boolean> => {
     setError(null);

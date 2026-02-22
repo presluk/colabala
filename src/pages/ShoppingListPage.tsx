@@ -91,8 +91,9 @@ export default function ShoppingListPage() {
   };
 
   const handleDeleteItem = async (itemId: string) => {
-    const { [itemId]: _, ...rest } = list.items;
-    await saveShoppingList({ ...list, items: rest }, userName);
+    const items = { ...list.items };
+    delete items[itemId];
+    await saveShoppingList({ ...list, items }, userName);
   };
 
   const handleDeleteList = async () => {

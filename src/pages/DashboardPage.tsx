@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useUser } from '../context/UserContext';
 import ChangelogTimeline from '../components/changelog/ChangelogTimeline';
@@ -8,6 +9,7 @@ export default function DashboardPage() {
   const { currentUser } = useUser();
   const isAdmin = currentUser?.role === 'admin';
   const [showAllActivity, setShowAllActivity] = useState(isAdmin);
+  const navigate = useNavigate();
 
   const stats = useMemo(() => {
     const lists = Object.values(data.shoppingLists);
@@ -40,18 +42,27 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+        <button
+          onClick={() => navigate('/shopping')}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 text-left hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition-all cursor-pointer"
+        >
           <p className="text-sm text-gray-500 dark:text-gray-400">Nákupní seznamy</p>
           <p className="text-3xl font-bold text-primary-600 mt-1">{stats.activeLists}</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+        </button>
+        <button
+          onClick={() => navigate('/tasks')}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 text-left hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition-all cursor-pointer"
+        >
           <p className="text-sm text-gray-500 dark:text-gray-400">Aktivní úkoly</p>
           <p className="text-3xl font-bold text-amber-500 mt-1">{stats.inProgressTasks}</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5">
+        </button>
+        <button
+          onClick={() => navigate('/notes')}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 text-left hover:shadow-md hover:border-gray-200 dark:hover:border-gray-600 transition-all cursor-pointer"
+        >
           <p className="text-sm text-gray-500 dark:text-gray-400">Poznámky</p>
           <p className="text-3xl font-bold text-green-600 mt-1">{stats.totalNotes}</p>
-        </div>
+        </button>
       </div>
 
       {/* Upcoming deadlines */}
